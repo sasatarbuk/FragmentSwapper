@@ -171,6 +171,9 @@ public class FragmentSwapper implements Parcelable {
 
     /**
      * Swap current fragment with the new one clearing entire history
+     *
+     * @param newFragment Fragment to replace the current one
+     * @param newTag Tag identifying the new fragment
      */
     public void swapClearHistoryToBottom(Fragment newFragment, String newTag) {
         if (!hasHistory()) {
@@ -183,12 +186,25 @@ public class FragmentSwapper implements Parcelable {
 
     /**
      * Swap current fragment with the new one clearing entire history except the init fragment
+     *
+     * @param newFragment Fragment to replace the current one
+     * @param newTag Tag identifying the new fragment
      */
     public void swapClearHistoryToInit(Fragment newFragment, String newTag) {
         if (!hasHistory()) {
             throw new FragmentSwapperException("No fragments in history");
         }
         history = history.subList(0, 1);
+        transactReplace(newFragment, newTag);
+    }
+
+    /**
+     * Swap current fragment with the new one without touching history
+     *
+     * @param newFragment
+     * @param newTag
+     */
+    public void swapSkipHistory(Fragment newFragment, String newTag) {
         transactReplace(newFragment, newTag);
     }
 
