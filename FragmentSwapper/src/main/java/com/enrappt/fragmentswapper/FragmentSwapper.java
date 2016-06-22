@@ -137,12 +137,22 @@ public class FragmentSwapper implements Parcelable {
      * Pop fragment entry from stack and swap
      */
     public void swapBack() {
+        swapBack((Bundle) null);
+    }
+
+    /**
+     * Pop fragment entry from stack and swap
+     *
+     * @param resultArguments Result arguments to pass to the fragment below if it implements the
+     *                        ResultArgumentsFragment interface
+     */
+    public void swapBack(Bundle resultArguments) {
         if (!hasHistory()) {
             throw new FragmentSwapperException("No fragments in history");
         }
         FragmentEntry entry = history.get(history.size() - 1);
         history.remove(history.size() - 1);
-        swapFragmentFromEntry(entry);
+        swapFragmentFromEntry(entry, resultArguments);
     }
 
     /**
@@ -152,6 +162,18 @@ public class FragmentSwapper implements Parcelable {
      * @param tag Tag to search
      */
     public void swapBack(String tag) {
+        swapBack(tag, null);
+    }
+
+    /**
+     * Search for the supplied fragment entry in history identified by the supplied tag and
+     * swap current fragment for the new one created with the found entry
+     *
+     * @param tag Tag to search
+     * @param resultArguments Result arguments to pass to the found fragment if it implements the
+     *                        ResultArgumentsFragment interface
+     */
+    public void swapBack(String tag, Bundle resultArguments) {
         if (tag == null) {
             throw new FragmentSwapperException("Tag is null");
         }
@@ -162,7 +184,7 @@ public class FragmentSwapper implements Parcelable {
             FragmentEntry entry = history.get(i);
             if (entry.getTag().equals(tag)) {
                 history = history.subList(0, i);
-                swapFragmentFromEntry(entry);
+                swapFragmentFromEntry(entry, resultArguments);
                 return;
             }
         }
@@ -211,9 +233,11 @@ public class FragmentSwapper implements Parcelable {
     /**
      * Swap old fragment for the new one created with fragment entry
      *
-     * @param fragmentEntry
+     * @param fragmentEntry Fragment entry object
+     * @param resultArguments Arguments to pass to the entry fragment if it implements the
+     *                        ResultArgumentsFragment interface.
      */
-    private void swapFragmentFromEntry(FragmentEntry fragmentEntry) {
+    private void swapFragmentFromEntry(FragmentEntry fragmentEntry, Bundle resultArguments) {
 
         // Try to instantiate fragment
         Fragment fragment;
@@ -228,6 +252,10 @@ public class FragmentSwapper implements Parcelable {
         // Restore fragment state
         fragment.setArguments(fragmentEntry.getArguments());
         fragment.setInitialSavedState((Fragment.SavedState) fragmentEntry.getSavedState());
+
+        if (fragment instanceof ResultArgumentsFragment && resultArguments != null) {
+            ((ResultArgumentsFragment) fragment).setResultArguments(resultArguments);
+        }
 
         // Swap current with the fragment from entry
         transactReplace(fragment, fragmentEntry.getTag());
