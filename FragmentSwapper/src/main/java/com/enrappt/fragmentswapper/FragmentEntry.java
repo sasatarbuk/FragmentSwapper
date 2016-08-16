@@ -3,15 +3,16 @@ package com.enrappt.fragmentswapper;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.v4.app.Fragment;
 
 public class FragmentEntry implements Parcelable {
 
     private Class<?> fragmentClass;
     private String tag;
     private Bundle arguments;
-    private Parcelable savedState;
+    private Fragment.SavedState savedState;
 
-    public FragmentEntry(Class<?> fragmentClass, String tag, Bundle arguments, Parcelable savedState) {
+    public FragmentEntry(Class<?> fragmentClass, String tag, Bundle arguments, Fragment.SavedState savedState) {
         this.fragmentClass = fragmentClass;
         this.tag = tag;
         this.arguments = arguments;
@@ -30,8 +31,18 @@ public class FragmentEntry implements Parcelable {
         return arguments;
     }
 
-    public Parcelable getSavedState() {
+    public Fragment.SavedState getSavedState() {
         return savedState;
+    }
+
+    @Override
+    public String toString() {
+        return "FragmentEntry{" +
+                "fragmentClass=" + fragmentClass +
+                ", tag='" + tag + '\'' +
+                ", arguments=" + arguments +
+                ", savedState=" + savedState +
+                '}';
     }
 
     @Override
@@ -51,7 +62,7 @@ public class FragmentEntry implements Parcelable {
         this.fragmentClass = (Class<?>) in.readSerializable();
         this.tag = in.readString();
         this.arguments = in.readBundle(Bundle.class.getClassLoader());
-        this.savedState = in.readParcelable(Parcelable.class.getClassLoader());
+        this.savedState = in.readParcelable(Fragment.SavedState.class.getClassLoader());
     }
 
     public static final Creator<FragmentEntry> CREATOR = new Creator<FragmentEntry>() {

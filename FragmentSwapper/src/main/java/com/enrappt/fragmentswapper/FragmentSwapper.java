@@ -115,6 +115,15 @@ public class FragmentSwapper implements Parcelable {
     }
 
     /**
+     * Return history
+     *
+     * @return History
+     */
+    public List<FragmentEntry> getHistory() {
+        return history;
+    }
+
+    /**
      * Put current fragment onto stack and swap it with a new one
      *
      * @param newFragment Fragment to replace the current one
@@ -126,7 +135,7 @@ public class FragmentSwapper implements Parcelable {
         Fragment fragment = getCurrentFragment();
         String tag = getCurrentTag();
         Bundle arguments = fragment.getArguments();
-        Parcelable state = getFragmentManager().saveFragmentInstanceState(fragment);
+        Fragment.SavedState state = getFragmentManager().saveFragmentInstanceState(fragment);
         history.add(new FragmentEntry(fragment.getClass(), tag, arguments, state));
 
         // Swap with the new fragment
@@ -251,7 +260,7 @@ public class FragmentSwapper implements Parcelable {
 
         // Restore fragment state
         fragment.setArguments(fragmentEntry.getArguments());
-        fragment.setInitialSavedState((Fragment.SavedState) fragmentEntry.getSavedState());
+        fragment.setInitialSavedState(fragmentEntry.getSavedState());
 
         if (fragment instanceof ResultArgumentsFragment && resultArguments != null) {
             ((ResultArgumentsFragment) fragment).setResultArguments(resultArguments);
