@@ -191,7 +191,7 @@ public class FragmentSwapper implements Parcelable {
         }
         for (int i = history.size() - 1; i >= 0; i --) {
             FragmentEntry entry = history.get(i);
-            if (entry.getTag().equals(tag)) {
+            if (entry.getTag() != null && entry.getTag().equals(tag)) {
                 history = history.subList(0, i);
                 swapFragmentFromEntry(entry, resultArguments);
                 return;
