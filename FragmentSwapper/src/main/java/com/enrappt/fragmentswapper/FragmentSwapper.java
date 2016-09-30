@@ -124,6 +124,15 @@ public class FragmentSwapper implements Parcelable {
     }
 
     /**
+     * Add fragment entry to history
+     *
+     * @param entry
+     */
+    public void addHistory(FragmentEntry entry) {
+        history.add(entry);
+    }
+
+    /**
      * Put current fragment onto stack and swap it with a new one
      *
      * @param newFragment Fragment to replace the current one
@@ -139,7 +148,7 @@ public class FragmentSwapper implements Parcelable {
         history.add(new FragmentEntry(fragment.getClass(), tag, arguments, state));
 
         // Swap with the new fragment
-        transactReplace(newFragment, newTag);
+        transactReplace(newFragment, newTag, true);
     }
 
     /**
@@ -212,7 +221,7 @@ public class FragmentSwapper implements Parcelable {
         }
         // Clear all of history
         history = new ArrayList<>();
-        transactReplace(newFragment, newTag);
+        transactReplace(newFragment, newTag, true);
     }
 
     /**
@@ -226,7 +235,7 @@ public class FragmentSwapper implements Parcelable {
             throw new FragmentSwapperException("No fragments in history");
         }
         history = history.subList(0, 1);
-        transactReplace(newFragment, newTag);
+        transactReplace(newFragment, newTag, true);
     }
 
     /**
@@ -236,7 +245,7 @@ public class FragmentSwapper implements Parcelable {
      * @param newTag
      */
     public void swapSkipHistory(Fragment newFragment, String newTag) {
-        transactReplace(newFragment, newTag);
+        transactReplace(newFragment, newTag, true);
     }
 
     /**
@@ -267,7 +276,7 @@ public class FragmentSwapper implements Parcelable {
         }
 
         // Swap current with the fragment from entry
-        transactReplace(fragment, fragmentEntry.getTag());
+        transactReplace(fragment, fragmentEntry.getTag(), false);
     }
 
     /**
@@ -288,10 +297,10 @@ public class FragmentSwapper implements Parcelable {
      * @param fragment
      * @param tag
      */
-    private void transactReplace(Fragment fragment, String tag) {
+    private void transactReplace(Fragment fragment, String tag, boolean isForward) {
         currentTag = tag;
         FragmentTransaction transaction = getFragmentManager().beginTransaction();
-        transactionAgent.transactReplace(transaction, containerId, fragment, tag);
+        transactionAgent.transactReplace(transaction, containerId, fragment, tag, isForward);
     }
 
     @Override

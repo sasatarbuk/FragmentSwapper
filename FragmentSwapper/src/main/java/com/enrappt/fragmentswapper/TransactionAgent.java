@@ -27,5 +27,5 @@ public interface TransactionAgent extends Parcelable {
      * @param fragment New fragment
      * @param tag Tag identifying the fragment
      */
-    public void transactReplace(FragmentTransaction transaction, int containerId, Fragment fragment, String tag);
+    public void transactReplace(FragmentTransaction transaction, int containerId, Fragment fragment, String tag, boolean isForward);
 }

@@ -13,7 +13,7 @@ public class DefaultTransactionAgent implements TransactionAgent {
     }
 
     @Override
-    public void transactReplace(FragmentTransaction transaction, int containerId, Fragment fragment, String tag) {
+    public void transactReplace(FragmentTransaction transaction, int containerId, Fragment fragment, String tag, boolean isForward) {
         transaction.replace(containerId, fragment, tag);
         transaction.commit();
     }
